@@ -33,11 +33,6 @@ public class PostService
         }
     }
     
-    // talvez implementar depois um getpostbyid 
-    
-    // metodo para editar post:
-    
-    // Um método não pode ter seu id atualizado, nem seu autor modificado.
 
     public void UpdatePost(int id, Post UpdatedPost)
     {
