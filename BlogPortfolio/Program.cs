@@ -84,16 +84,16 @@ namespace BlogPortfolio
             
         }
         
-        // TODO: implementar verificações de entrada para regras de negócio como o título não pode ser simplesmente um número, assim como o autor.
+        
         static void AddPostMenu()
         {
             Console.Clear();
             Console.WriteLine("Adicionar um novo post\n");
             Console.Write("Digite o título do post: ");
             string title = Console.ReadLine();
-            if (string.IsNullOrEmpty(title))
+            if (string.IsNullOrEmpty(title) || title.All(char.IsDigit))
             {
-                Console.WriteLine("Título não pode ser vazio. Pressione qualquer tecla para continuar...");
+                Console.WriteLine("Título inválido. Pressione qualquer tecla para continuar...");
                 Console.ReadKey();
                 return;
             }
@@ -108,9 +108,9 @@ namespace BlogPortfolio
             Console.Write("Digite o autor do post: ");
             string author = Console.ReadLine();
                 
-            if (string.IsNullOrEmpty(author))
+            if (string.IsNullOrEmpty(author) || author.All(char.IsDigit))
             {
-                Console.WriteLine("Autor não pode ser vazio. Pressione qualquer tecla para continuar...");
+                Console.WriteLine("Autor inválido. Pressione qualquer tecla para continuar...");
                 Console.ReadKey();
                 Menu();
             }
@@ -162,6 +162,13 @@ namespace BlogPortfolio
             }
             Console.Write("Digite o novo título do post (deixe em branco para manter o atual): ");
             string newTitle = Console.ReadLine();
+
+            if (newTitle.All(char.IsDigit))
+            {
+                Console.Write("Título inválido. O título não pode ser apenas números. Pressione qualquer tecla para continuar...");
+                Console.ReadKey();
+                Menu();
+            }
             if (string.IsNullOrEmpty(newTitle))
             {
                 newTitle = postToUpdate.Title; // Mantém o título atual se não for fornecido um novo
