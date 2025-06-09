@@ -34,8 +34,20 @@ namespace BlogPortfolio
                         // Adicionar um novo post
                         AddPostMenu();
                         break;
+                    case 2:
+                        //Atualizar um post
+                        UpdatePostMenu();
+                        break;
+                    case 3:
+                        //Remover um post
+                        RemovePostMenu();
+                        break;
                     case 4:
                         ListAllPostsMenu();
+                        break;
+                    case 5: 
+                        // Listar um post por ID
+                        GetPostByIdMenu();
                         break;
                     case 0:
                         Console.WriteLine("Saindo do portal de posts do Blog. Até logo!");
@@ -116,6 +128,97 @@ namespace BlogPortfolio
             Menu();
                 
         }
+
+        static void UpdatePostMenu()
+        {
+            Console.Clear();
+            Console.WriteLine("Atualizar um post\n");
+            List<Post> posts = postService.GetAllPosts();
+            if (posts.Count == 0)
+            {
+                Console.WriteLine("Nenhum post encontrado. Pressione qualquer tecla para continuar...");
+                Console.ReadKey();
+                Menu();
+            }
+            Console.WriteLine("Lista de posts disponíveis para atualização:\n");
+            foreach (var post in posts)
+            {
+                Console.WriteLine($"ID: {post.Id},\n Título: {post.Title},\n Autor: {post.Author},\n Criado em: {post.CreatedAt},\n Atualizado em: {post.UpdatedAt}");
+            }
+            Console.Write("Digite o ID do post que deseja atualizar: ");
+            int input = int.Parse(Console.ReadLine());
+            if (input <= 0)
+            {
+                Console.WriteLine("ID inválido. Pressione qualquer tecla para continuar...");
+                Console.ReadKey();
+                Menu();
+            }
+            Post postToUpdate = posts.FirstOrDefault(p => p.Id == input);
+            if (postToUpdate == null)
+            {
+                Console.WriteLine($"Post com ID {input} não encontrado. Pressione qualquer tecla para continuar...");
+                Console.ReadKey();
+                Menu();
+            }
+            Console.Write("Digite o novo título do post (deixe em branco para manter o atual): ");
+            string newTitle = Console.ReadLine();
+            if (string.IsNullOrEmpty(newTitle))
+            {
+                newTitle = postToUpdate.Title; // Mantém o título atual se não for fornecido um novo
+            }
+            Console.Write("Digite o novo conteúdo do post (deixe em branco para manter o atual): ");
+            string newContent = Console.ReadLine();
+            if (string.IsNullOrEmpty(newContent))
+            {
+                newContent = postToUpdate.Content; // Mantém o conteúdo atual se não for fornecido um novo
+            }
+            Post updatedPost = new Post
+            {
+                Title = newTitle,
+                Content = newContent,
+                Author = postToUpdate.Author // O autor não pode ser atualizado
+            };
+            try
+            {
+                postService.UpdatePost(input, updatedPost);
+                Console.WriteLine($"Post com ID {input} atualizado com sucesso! Pressione qualquer tecla para continuar...");
+                Console.ReadKey();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+        }
+
+        static void RemovePostMenu()
+        {
+            Console.Clear();
+            Console.WriteLine("Remover um post\n");
+            Console.Write("Digite o ID do post que deseja remover: ");
+            int input = int.Parse(Console.ReadLine());
+            if (input <= 0)
+            {
+                Console.WriteLine("ID inválido. Pressione qualquer tecla para continuar...");
+                Console.ReadKey();
+                Menu();
+            }
+            
+            
+            try
+            {
+                postService.RemovePost(input);
+                Console.WriteLine(
+                    $"Post com ID {input} removido com sucesso! Pressione qualquer tecla para continuar...");
+                Console.ReadKey();
+                Menu();
+            }
+            catch
+            {
+                throw new KeyNotFoundException($"Post com ID {input} não encontrado.");
+            }
+            Menu();
+        }
         static void ListAllPostsMenu()
         {
             Console.Clear();
@@ -130,12 +233,37 @@ namespace BlogPortfolio
             Console.WriteLine("Lista de posts:\n");
             foreach (var post in posts)
             {
-                Console.WriteLine($"ID: {post.Id},\n Título: {post.Title},\n Autor: {post.Author},\n Criado em: {post.CreatedAt},\n Atualizado em: {post.UpdatedAt}");
+                Console.WriteLine($"ID: {post.Id},\n Título: {post.Title},\n Autor: {post.Author},\n Criado em: {post.CreatedAt},\n Atualizado em: {post.UpdatedAt}\n Conteúdo: {post.Content}\n");
             }
             Console.WriteLine("\nPressione qualquer tecla para continuar...");
             Console.ReadKey();
             Menu();
 
+        }
+
+        static void GetPostByIdMenu()
+        {
+            Console.Clear();
+            Console.WriteLine("Buscar um post por ID\n");
+            Console.Write("Digite o ID do post que deseja buscar: ");
+            int input = int.Parse(Console.ReadLine());
+            if (input <= 0)
+            {
+                Console.WriteLine("ID inválido. Pressione qualquer tecla para continuar...");
+                Console.ReadKey();
+                Menu();
+            }
+            Post post = postService.GetAllPosts().FirstOrDefault(p => p.Id == input);
+            if (post == null)
+            {
+                Console.WriteLine($"Post com ID {input} não encontrado. Pressione qualquer tecla para continuar...");
+                Console.ReadKey();
+                Menu();
+            }
+            Console.WriteLine($"ID: {post.Id},\n Título: {post.Title},\n Autor: {post.Author},\n Criado em: {post.CreatedAt},\n Atualizado em: {post.UpdatedAt}\n Conteúdo: {post.Content}\n");
+            Console.WriteLine("\nPressione qualquer tecla para continuar...");
+            Console.ReadKey();
+            Menu();
         }
     }
 }
